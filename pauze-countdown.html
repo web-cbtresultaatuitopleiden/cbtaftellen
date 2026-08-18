@@ -92,7 +92,36 @@
     font-weight: 400;
     font-size: 13px;
     color: var(--cbt-darkgrey);
-    margin: 0 0 26px 0;
+    margin: 0 0 18px 0;
+  }
+
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border-radius: 10px;
+    border: 1.5px solid var(--cbt-blue);
+    background: var(--white);
+    color: var(--cbt-blue);
+    font-family: 'Signika', 'Trebuchet MS', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .toggle-btn:hover:not(.active) {
+    background: var(--cbt-blue-tint5);
+  }
+
+  .toggle-btn.active {
+    background: var(--cbt-blue);
+    color: var(--white);
   }
 
   /* Signature element: Cbt's documented "grafische overlay" —
@@ -237,6 +266,11 @@
       <h1 id="headline">Aftellen naar de pauze</h1>
       <p class="intro" id="introtext">Elke dag om 12:30 uur is het zover.</p>
 
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="btnPauze" type="button">☕ Pauze 12:30</button>
+        <button class="toggle-btn" id="btnEinde" type="button">🏁 Einde werkdag 17:00</button>
+      </div>
+
       <div class="overlay-wrap">
         <div class="bubble-grey">
           <div class="clock" id="clock">00:00:00</div>
@@ -251,8 +285,8 @@
       <div class="status" id="status">Even geduld nog&hellip;</div>
 
       <ul class="checklist" id="checklist">
-        <li><span class="check">✓</span> Koffie gezet</li>
-        <li><span class="check">✓</span> Benen gestrekt</li>
+        <li><span class="check">✓</span> <span id="check1">Koffie gezet</span></li>
+        <li><span class="check">✓</span> <span id="check2">Benen gestrekt</span></li>
       </ul>
 
       <div class="footer-note">Cbt &middot; resultaat uit aftellen</div>
@@ -260,25 +294,68 @@
   </div>
 
 <script>
-  const targetHour = 12;
-  const targetMinute = 30;
-  const dayStartHour = 8;
-  const totalWindowMinutes = (targetHour - dayStartHour) * 60 + targetMinute;
+  const modes = {
+    pauze: {
+      hour: 12, minute: 30, dayStartHour: 8,
+      headline: 'Aftellen naar de pauze',
+      intro: 'Elke dag om 12:30 uur is het zover.',
+      targetLabel: '12:30',
+      doneHeadline: 'Het is 12:30 uur!',
+      doneIntro: 'Tijd om de benen te strekken.',
+      doneEmoji: '☕',
+      doneClockLabel: 'pauze',
+      doneYellow: 'Geniet<br>ervan!',
+      doneStatus: 'Fijne pauze!',
+      almostYellow: 'Bijna<br>zo ver',
+      almostStatus: 'Bijna pauze — nog maar even',
+      checklist: ['Koffie gezet', 'Benen gestrekt']
+    },
+    einde: {
+      hour: 17, minute: 0, dayStartHour: 8,
+      headline: 'Aftellen naar einde werkdag',
+      intro: 'Elke dag om 17:00 uur mag de laptop dicht.',
+      targetLabel: '17:00',
+      doneHeadline: 'Het is 17:00 uur!',
+      doneIntro: 'Tijd om de laptop dicht te klappen.',
+      doneEmoji: '🏁',
+      doneClockLabel: 'vrij',
+      doneYellow: 'Tot<br>morgen!',
+      doneStatus: 'Fijne avond!',
+      almostYellow: 'Bijna<br>vrij',
+      almostStatus: 'Bijna klaar voor vandaag',
+      checklist: ['Laptop dicht', 'Tot morgen!']
+    }
+  };
 
-  function getTarget(now) {
+  let currentMode = 'pauze';
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function getTarget(now, cfg) {
     const t = new Date(now);
-    t.setHours(targetHour, targetMinute, 0, 0);
+    t.setHours(cfg.hour, cfg.minute, 0, 0);
     if (now.getTime() > t.getTime()) {
       t.setDate(t.getDate() + 1);
     }
     return t;
   }
 
-  function pad(n) { return String(n).padStart(2, '0'); }
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('btnPauze').classList.toggle('active', mode === 'pauze');
+    document.getElementById('btnEinde').classList.toggle('active', mode === 'einde');
+    const cfg = modes[mode];
+    document.getElementById('check1').textContent = cfg.checklist[0];
+    document.getElementById('check2').textContent = cfg.checklist[1];
+    tick();
+  }
 
   function tick() {
+    const cfg = modes[currentMode];
+    const totalWindowMinutes = (cfg.hour - cfg.dayStartHour) * 60 + cfg.minute;
+
     const now = new Date();
-    const target = getTarget(now);
+    const target = getTarget(now, cfg);
     const diffMs = target.getTime() - now.getTime();
 
     const headline = document.getElementById('headline');
@@ -290,16 +367,20 @@
     const checklist = document.getElementById('checklist');
 
     if (diffMs <= 1000) {
-      headline.textContent = 'Het is 12:30 uur!';
-      introtext.textContent = 'Tijd om de benen te strekken.';
-      clock.textContent = '☕';
-      clocklabel.textContent = 'pauze';
-      yellowtext.innerHTML = 'Geniet<br>ervan!';
-      status.textContent = 'Fijne pauze!';
+      headline.textContent = cfg.doneHeadline;
+      introtext.textContent = cfg.doneIntro;
+      clock.textContent = cfg.doneEmoji;
+      clocklabel.textContent = cfg.doneClockLabel;
+      yellowtext.innerHTML = cfg.doneYellow;
+      status.textContent = cfg.doneStatus;
       document.getElementById('fill').style.width = '100%';
       checklist.classList.add('show');
       return;
     }
+
+    checklist.classList.remove('show');
+    headline.textContent = cfg.headline;
+    introtext.textContent = cfg.intro;
 
     const totalSeconds = Math.floor(diffMs / 1000);
     const hours = Math.floor(totalSeconds / 3600);
@@ -314,16 +395,19 @@
     document.getElementById('fill').style.width = progress + '%';
 
     if (minutesUntil <= 5) {
-      status.textContent = 'Bijna pauze — nog maar even';
-      yellowtext.innerHTML = 'Bijna<br>zo ver';
+      status.textContent = cfg.almostStatus;
+      yellowtext.innerHTML = cfg.almostYellow;
     } else if (minutesUntil <= 30) {
       status.textContent = 'Nog ' + Math.ceil(minutesUntil) + ' minuten te gaan';
-      yellowtext.innerHTML = 'Doel<br>12:30';
+      yellowtext.innerHTML = 'Doel<br>' + cfg.targetLabel;
     } else {
       status.textContent = 'Nog ' + hours + ' uur en ' + minutes + ' min te gaan';
-      yellowtext.innerHTML = 'Doel<br>12:30';
+      yellowtext.innerHTML = 'Doel<br>' + cfg.targetLabel;
     }
   }
+
+  document.getElementById('btnPauze').addEventListener('click', function () { setMode('pauze'); });
+  document.getElementById('btnEinde').addEventListener('click', function () { setMode('einde'); });
 
   tick();
   setInterval(tick, 1000);
