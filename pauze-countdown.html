@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aftellen naar de pauze — Cbt</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600;700&display=swap');
+
+  :root {
+    /* Cbt Brand Identity Book 2022 */
+    --cbt-blue: #14387F;
+    --cbt-blue-tint2: #123F59;
+    --cbt-blue-tint3: #4777BB;
+    --cbt-blue-tint4: #80BFEA;
+    --cbt-blue-tint5: #D9EDFC;
+    --cbt-yellow: #F59921;
+    --cbt-yellow-tint2: #F8AC2D;
+    --cbt-yellow-tint3: #FABE4E;
+    --cbt-yellow-tint4: #F6D8A5;
+    --cbt-darkgrey: #4B4D4C;
+    --cbt-darkgrey2: #292C2D;
+    --cbt-grey: #E8EDF2;
+    --cbt-grey-support: #A1A3A3;
+    --cbt-turquoise: #52BBB5;
+    --white: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: var(--cbt-grey);
+    font-family: 'Signika', 'Trebuchet MS', sans-serif;
+    color: var(--cbt-darkgrey);
+  }
+
+  .stage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 36px 20px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 460px;
+    background: var(--white);
+    border-radius: 20px;
+    padding: 28px 28px 24px;
+    position: relative;
+    box-shadow: 0 16px 40px rgba(20, 56, 127, 0.14);
+  }
+
+  /* Cbt page-corner label, seen throughout the brand book */
+  .tag {
+    position: absolute;
+    top: 0;
+    right: 28px;
+    background: var(--cbt-yellow);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    padding: 7px 16px;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .brandrow {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 22px;
+    margin-top: 6px;
+  }
+
+  .brandrow .cbt {
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--cbt-blue);
+  }
+
+  .brandrow .tagline {
+    font-weight: 300;
+    font-size: 12px;
+    color: var(--cbt-blue-tint3);
+  }
+
+  h1 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--cbt-blue);
+    margin: 0 0 4px 0;
+  }
+
+  .intro {
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--cbt-darkgrey);
+    margin: 0 0 26px 0;
+  }
+
+  /* Signature element: Cbt's documented "grafische overlay" —
+     two overlapping circles, grey + yellow, 92% opacity, centered text */
+  .overlay-wrap {
+    position: relative;
+    width: 280px;
+    height: 240px;
+    margin: 0 auto 22px;
+  }
+
+  .bubble-grey {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    background: var(--cbt-blue-tint5);
+    opacity: 0.92;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .bubble-grey .clock {
+    font-weight: 300;
+    font-size: 34px;
+    color: var(--cbt-blue);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .bubble-grey .clocklabel {
+    margin-top: 6px;
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cbt-blue-tint3);
+  }
+
+  .bubble-yellow {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    background: var(--cbt-yellow-tint3);
+    opacity: 0.92;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .bubble-yellow span {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--cbt-blue-tint2);
+    line-height: 1.25;
+  }
+
+  .track {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--cbt-grey);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .fill {
+    height: 100%;
+    width: 0%;
+    background: var(--cbt-yellow);
+    border-radius: 999px;
+    transition: width 0.6s ease;
+  }
+
+  .status {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cbt-blue);
+  }
+
+  .checklist {
+    margin-top: 20px;
+    padding-left: 0;
+    display: none;
+  }
+
+  .checklist.show { display: block; }
+
+  .checklist li {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cbt-blue);
+    margin-bottom: 6px;
+  }
+
+  .checklist .check {
+    width: 16px;
+    height: 16px;
+    border-radius: 5px;
+    background: var(--cbt-yellow);
+    color: var(--white);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .footer-note {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--cbt-grey-support);
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="card">
+      <div class="tag">Live countdown</div>
+
+      <div class="brandrow">
+        <span class="cbt">cbt</span>
+        <span class="tagline">resultaat uit opleiden</span>
+      </div>
+
+      <h1 id="headline">Aftellen naar de pauze</h1>
+      <p class="intro" id="introtext">Elke dag om 12:30 uur is het zover.</p>
+
+      <div class="overlay-wrap">
+        <div class="bubble-grey">
+          <div class="clock" id="clock">00:00:00</div>
+          <div class="clocklabel" id="clocklabel">uur · min · sec</div>
+        </div>
+        <div class="bubble-yellow">
+          <span id="yellowtext">Doel<br>12:30</span>
+        </div>
+      </div>
+
+      <div class="track"><div class="fill" id="fill"></div></div>
+      <div class="status" id="status">Even geduld nog&hellip;</div>
+
+      <ul class="checklist" id="checklist">
+        <li><span class="check">✓</span> Koffie gezet</li>
+        <li><span class="check">✓</span> Benen gestrekt</li>
+      </ul>
+
+      <div class="footer-note">Cbt &middot; resultaat uit aftellen</div>
+    </div>
+  </div>
+
+<script>
+  const targetHour = 12;
+  const targetMinute = 30;
+  const dayStartHour = 8;
+  const totalWindowMinutes = (targetHour - dayStartHour) * 60 + targetMinute;
+
+  function getTarget(now) {
+    const t = new Date(now);
+    t.setHours(targetHour, targetMinute, 0, 0);
+    if (now.getTime() > t.getTime()) {
+      t.setDate(t.getDate() + 1);
+    }
+    return t;
+  }
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const now = new Date();
+    const target = getTarget(now);
+    const diffMs = target.getTime() - now.getTime();
+
+    const headline = document.getElementById('headline');
+    const introtext = document.getElementById('introtext');
+    const clock = document.getElementById('clock');
+    const clocklabel = document.getElementById('clocklabel');
+    const yellowtext = document.getElementById('yellowtext');
+    const status = document.getElementById('status');
+    const checklist = document.getElementById('checklist');
+
+    if (diffMs <= 1000) {
+      headline.textContent = 'Het is 12:30 uur!';
+      introtext.textContent = 'Tijd om de benen te strekken.';
+      clock.textContent = '☕';
+      clocklabel.textContent = 'pauze';
+      yellowtext.innerHTML = 'Geniet<br>ervan!';
+      status.textContent = 'Fijne pauze!';
+      document.getElementById('fill').style.width = '100%';
+      checklist.classList.add('show');
+      return;
+    }
+
+    const totalSeconds = Math.floor(diffMs / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    clock.textContent = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+    clocklabel.textContent = 'uur · min · sec';
+
+    const minutesUntil = diffMs / 60000;
+    const progress = Math.min(100, Math.max(0, 100 - (minutesUntil / totalWindowMinutes) * 100));
+    document.getElementById('fill').style.width = progress + '%';
+
+    if (minutesUntil <= 5) {
+      status.textContent = 'Bijna pauze — nog maar even';
+      yellowtext.innerHTML = 'Bijna<br>zo ver';
+    } else if (minutesUntil <= 30) {
+      status.textContent = 'Nog ' + Math.ceil(minutesUntil) + ' minuten te gaan';
+      yellowtext.innerHTML = 'Doel<br>12:30';
+    } else {
+      status.textContent = 'Nog ' + hours + ' uur en ' + minutes + ' min te gaan';
+      yellowtext.innerHTML = 'Doel<br>12:30';
+    }
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
