@@ -308,6 +308,7 @@
       doneStatus: 'Fijne pauze!',
       almostYellow: 'Bijna<br>zo ver',
       almostStatus: 'Bijna pauze — nog maar even',
+      titleLabel: 'pauze',
       checklist: ['Koffie gezet', 'Benen gestrekt']
     },
     einde: {
@@ -323,6 +324,7 @@
       doneStatus: 'Fijne avond!',
       almostYellow: 'Bijna<br>vrij',
       almostStatus: 'Bijna klaar voor vandaag',
+      titleLabel: 'einde werkdag',
       checklist: ['Laptop dicht', 'Tot morgen!']
     }
   };
@@ -375,6 +377,7 @@
       status.textContent = cfg.doneStatus;
       document.getElementById('fill').style.width = '100%';
       checklist.classList.add('show');
+      document.title = cfg.doneEmoji + ' ' + cfg.doneStatus + ' — Cbt';
       return;
     }
 
@@ -389,6 +392,7 @@
 
     clock.textContent = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
     clocklabel.textContent = 'uur · min · sec';
+    document.title = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds) + ' tot ' + cfg.titleLabel + ' — Cbt';
 
     const minutesUntil = diffMs / 60000;
     const progress = Math.min(100, Math.max(0, 100 - (minutesUntil / totalWindowMinutes) * 100));
