@@ -285,7 +285,7 @@
       <div class="status" id="status">Even geduld nog&hellip;</div>
 
       <ul class="checklist" id="checklist">
-        <li><span class="check">✓</span> <span id="check1">Koffie gezet</span></li>
+        <li><span class="check">✓</span> <span id="check1">Lekkere koffie gezet</span></li>
         <li><span class="check">✓</span> <span id="check2">Benen gestrekt</span></li>
       </ul>
 
@@ -296,35 +296,35 @@
 <script>
   const modes = {
     pauze: {
-      hour: 12, minute: 30, dayStartHour: 8,
+      hour: 12, minute: 30, dayStartHour: 8, durationMinutes: 30,
       headline: 'Aftellen naar de pauze',
       intro: 'Elke dag om 12:30 uur is het zover.',
       targetLabel: '12:30',
-      doneHeadline: 'Het is 12:30 uur!',
-      doneIntro: 'Tijd om de benen te strekken.',
-      doneEmoji: '☕',
-      doneClockLabel: 'pauze',
-      doneYellow: 'Geniet<br>ervan!',
-      doneStatus: 'Fijne pauze!',
+      duringHeadline: 'Het is pauze!',
+      duringIntro: 'Pauze duurt tot 13:00 uur.',
+      duringEmoji: '☕',
+      duringClockLabel: 'tot einde pauze',
+      duringYellow: 'Geniet<br>ervan!',
       almostYellow: 'Bijna<br>zo ver',
       almostStatus: 'Bijna pauze — nog maar even',
       titleLabel: 'pauze',
+      titleDuringWord: 'einde pauze',
       checklist: ['Koffie gezet', 'Benen gestrekt']
     },
     einde: {
-      hour: 17, minute: 0, dayStartHour: 8,
+      hour: 17, minute: 0, dayStartHour: 8, durationMinutes: 930, /* tot 08:30 de volgende dag */
       headline: 'Aftellen naar einde werkdag',
       intro: 'Elke dag om 17:00 uur mag de laptop dicht.',
       targetLabel: '17:00',
-      doneHeadline: 'Het is 17:00 uur!',
-      doneIntro: 'Tijd om de laptop dicht te klappen.',
-      doneEmoji: '🏁',
-      doneClockLabel: 'vrij',
-      doneYellow: 'Tot<br>morgen!',
-      doneStatus: 'Fijne avond!',
+      duringHeadline: 'Werkdag zit erop!',
+      duringIntro: 'Morgen begint het weer om 08:30 uur.',
+      duringEmoji: '🌙',
+      duringClockLabel: 'tot start werkdag',
+      duringYellow: 'Tot<br>morgen!',
       almostYellow: 'Bijna<br>vrij',
       almostStatus: 'Bijna klaar voor vandaag',
       titleLabel: 'einde werkdag',
+      titleDuringWord: 'start werkdag',
       checklist: ['Laptop dicht', 'Tot morgen!']
     }
   };
@@ -333,13 +333,23 @@
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
-  function getTarget(now, cfg) {
-    const t = new Date(now);
-    t.setHours(cfg.hour, cfg.minute, 0, 0);
-    if (now.getTime() > t.getTime()) {
-      t.setDate(t.getDate() + 1);
+  function formatRemain(ms) {
+    const totalMin = Math.ceil(ms / 60000);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    if (h > 0) return h + ' uur' + (m > 0 ? ' ' + m + ' min' : '');
+    return m + ' min';
+  }
+
+  function getWindow(now, cfg) {
+    let start = new Date(now);
+    start.setHours(cfg.hour, cfg.minute, 0, 0);
+    let end = new Date(start.getTime() + cfg.durationMinutes * 60000);
+    if (now.getTime() >= end.getTime()) {
+      start.setDate(start.getDate() + 1);
+      end = new Date(start.getTime() + cfg.durationMinutes * 60000);
     }
-    return t;
+    return { start, end };
   }
 
   function setMode(mode) {
@@ -357,8 +367,8 @@
     const totalWindowMinutes = (cfg.hour - cfg.dayStartHour) * 60 + cfg.minute;
 
     const now = new Date();
-    const target = getTarget(now, cfg);
-    const diffMs = target.getTime() - now.getTime();
+    const { start, end } = getWindow(now, cfg);
+    const inWindow = now.getTime() >= start.getTime() && now.getTime() < end.getTime();
 
     const headline = document.getElementById('headline');
     const introtext = document.getElementById('introtext');
@@ -368,16 +378,24 @@
     const status = document.getElementById('status');
     const checklist = document.getElementById('checklist');
 
-    if (diffMs <= 1000) {
-      headline.textContent = cfg.doneHeadline;
-      introtext.textContent = cfg.doneIntro;
-      clock.textContent = cfg.doneEmoji;
-      clocklabel.textContent = cfg.doneClockLabel;
-      yellowtext.innerHTML = cfg.doneYellow;
-      status.textContent = cfg.doneStatus;
+    if (inWindow) {
+      const remainMs = end.getTime() - now.getTime();
+      const remainSeconds = Math.floor(remainMs / 1000);
+      const rh = Math.floor(remainSeconds / 3600);
+      const rm = Math.floor((remainSeconds % 3600) / 60);
+      const rs = remainSeconds % 60;
+      const remainMinutesRounded = Math.ceil(remainMs / 60000);
+
+      headline.textContent = cfg.duringHeadline;
+      introtext.textContent = cfg.duringIntro;
+      clock.textContent = pad(rh) + ':' + pad(rm) + ':' + pad(rs);
+      clocklabel.textContent = cfg.duringClockLabel;
+      yellowtext.innerHTML = cfg.duringYellow;
+      status.textContent = 'Nog ' + formatRemain(remainMs) + (currentMode === 'pauze' ? ' pauze' : ' tot de volgende werkdag');
       document.getElementById('fill').style.width = '100%';
       checklist.classList.add('show');
-      document.title = cfg.doneEmoji + ' ' + cfg.doneStatus + ' — Cbt';
+      document.title = cfg.duringEmoji + ' Nog ' + formatRemain(remainMs)
+        + (cfg.titleDuringWord ? ' tot ' + cfg.titleDuringWord : '') + ' — Cbt';
       return;
     }
 
@@ -385,6 +403,7 @@
     headline.textContent = cfg.headline;
     introtext.textContent = cfg.intro;
 
+    const diffMs = start.getTime() - now.getTime();
     const totalSeconds = Math.floor(diffMs / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
