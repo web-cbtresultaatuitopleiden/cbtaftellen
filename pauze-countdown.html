@@ -47,10 +47,10 @@
 
   .card {
     width: 100%;
-    max-width: 460px;
+    max-width: 780px;
     background: var(--white);
-    border-radius: 20px;
-    padding: 28px 28px 24px;
+    border-radius: 24px;
+    padding: clamp(28px, 4vw, 56px) clamp(28px, 4vw, 56px) clamp(24px, 3.5vw, 48px);
     position: relative;
     box-shadow: 0 16px 40px rgba(20, 56, 127, 0.14);
   }
@@ -59,13 +59,13 @@
   .tag {
     position: absolute;
     top: 0;
-    right: 28px;
+    right: clamp(28px, 4vw, 56px);
     background: var(--cbt-yellow);
     color: var(--white);
     font-weight: 700;
-    font-size: 11px;
+    font-size: clamp(11px, 1vw, 13px);
     letter-spacing: 0.03em;
-    padding: 7px 16px;
+    padding: clamp(7px, 0.8vw, 9px) clamp(16px, 1.6vw, 20px);
     border-radius: 0 0 8px 8px;
   }
 
@@ -77,12 +77,12 @@
   }
 
   .brandrow svg {
-    height: 42px;
+    height: clamp(42px, 5vw, 60px);
     width: auto;
   }
 
   h1 {
-    font-size: 19px;
+    font-size: clamp(19px, 2.6vw, 30px);
     font-weight: 700;
     color: var(--cbt-blue);
     margin: 0 0 4px 0;
@@ -90,7 +90,7 @@
 
   .intro {
     font-weight: 400;
-    font-size: 13px;
+    font-size: clamp(13px, 1.4vw, 16px);
     color: var(--cbt-darkgrey);
     margin: 0 0 18px 0;
   }
@@ -103,14 +103,14 @@
 
   .toggle-btn {
     flex: 1;
-    padding: 10px 8px;
+    padding: clamp(10px, 1.1vw, 14px) clamp(8px, 1vw, 14px);
     border-radius: 10px;
     border: 1.5px solid var(--cbt-blue);
     background: var(--white);
     color: var(--cbt-blue);
     font-family: 'Signika', 'Trebuchet MS', sans-serif;
     font-weight: 600;
-    font-size: 12.5px;
+    font-size: clamp(12.5px, 1.2vw, 16px);
     cursor: pointer;
     transition: background 0.15s ease, color 0.15s ease;
   }
@@ -128,8 +128,8 @@
      two overlapping circles, grey + yellow, 92% opacity, centered text */
   .overlay-wrap {
     position: relative;
-    width: 280px;
-    height: 240px;
+    width: clamp(280px, 38vw, 480px);
+    height: clamp(240px, 32vw, 410px);
     margin: 0 auto 22px;
   }
 
@@ -137,8 +137,8 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 230px;
-    height: 230px;
+    width: clamp(230px, 31vw, 390px);
+    height: clamp(230px, 31vw, 390px);
     border-radius: 50%;
     background: var(--cbt-blue-tint5);
     opacity: 0.92;
@@ -151,7 +151,7 @@
 
   .bubble-grey .clock {
     font-weight: 300;
-    font-size: 34px;
+    font-size: clamp(34px, 4.6vw, 62px);
     color: var(--cbt-blue);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
@@ -161,7 +161,7 @@
   .bubble-grey .clocklabel {
     margin-top: 6px;
     font-weight: 400;
-    font-size: 11px;
+    font-size: clamp(11px, 1.1vw, 15px);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--cbt-blue-tint3);
@@ -171,8 +171,8 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 128px;
-    height: 128px;
+    width: clamp(128px, 17vw, 220px);
+    height: clamp(128px, 17vw, 220px);
     border-radius: 50%;
     background: var(--cbt-yellow-tint3);
     opacity: 0.92;
@@ -180,18 +180,18 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 10px;
+    padding: clamp(10px, 1.2vw, 16px);
   }
 
   .bubble-yellow span {
     font-weight: 600;
-    font-size: 13px;
+    font-size: clamp(13px, 1.5vw, 19px);
     color: var(--cbt-blue-tint2);
     line-height: 1.25;
   }
 
   .track {
-    height: 8px;
+    height: clamp(8px, 0.8vw, 12px);
     border-radius: 999px;
     background: var(--cbt-grey);
     overflow: hidden;
@@ -208,7 +208,7 @@
 
   .status {
     text-align: center;
-    font-size: 14px;
+    font-size: clamp(14px, 1.5vw, 19px);
     font-weight: 600;
     color: var(--cbt-blue);
   }
@@ -225,8 +225,9 @@
     list-style: none;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    font-size: 13px;
+    font-size: clamp(13px, 1.3vw, 16px);
     font-weight: 600;
     color: var(--cbt-blue);
     margin-bottom: 6px;
@@ -248,7 +249,7 @@
   .footer-note {
     margin-top: 22px;
     text-align: center;
-    font-size: 11px;
+    font-size: clamp(11px, 1vw, 13px);
     font-weight: 300;
     color: var(--cbt-grey-support);
   }
